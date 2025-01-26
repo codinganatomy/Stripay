@@ -10,9 +10,9 @@ public class StripeService(CustomerService customerService, PaymentIntentService
     public async Task<ProcessPaymentResponse> ProcessPaymentAsync(ProcessPaymentRequest request)
     {
          
-            var customerId = await CreateCustomer(request.CustomerEmail, request.CustomerName);
+        var customerId = await CreateCustomer(request.CustomerEmail, request.CustomerName);
 
-            var intentCreateOptions = new PaymentIntentCreateOptions
+        var intentCreateOptions = new PaymentIntentCreateOptions
         {
             Customer = customerId,
             Amount = request.Amount,
@@ -21,20 +21,20 @@ public class StripeService(CustomerService customerService, PaymentIntentService
             PaymentMethodTypes = request.PaymentMethodTypes,
             PaymentMethod = request.PaymentMethodId,
         };
-            var response = await _paymentIntentService.CreateAsync(intentCreateOptions);
+        var response = await _paymentIntentService.CreateAsync(intentCreateOptions);
 
-            return new ProcessPaymentResponse
-            {
-                ResponseStatusCode = (int)response.StripeResponse.StatusCode,
-                Amount = response.Amount,
-                PaymentIntentId = response.Id,
-                PaymentMethodId = response.PaymentMethodId,
-                CaptureMethod = response.CaptureMethod,
-                CustomerId = response.CustomerId,
-                ChargeId = response.LatestChargeId,
-                Status = response.Status,
-                PaymentMethodTypes = response.PaymentMethodTypes,
-            };
+        return new ProcessPaymentResponse
+        {
+            ResponseStatusCode = (int)response.StripeResponse.StatusCode,
+            Amount = response.Amount,
+            PaymentIntentId = response.Id,
+            PaymentMethodId = response.PaymentMethodId,
+            CaptureMethod = response.CaptureMethod,
+            CustomerId = response.CustomerId,
+            ChargeId = response.LatestChargeId,
+            Status = response.Status,
+            PaymentMethodTypes = response.PaymentMethodTypes,
+        };
         
     }
 
@@ -43,12 +43,12 @@ public class StripeService(CustomerService customerService, PaymentIntentService
         string name
     )
     {
-            var customerOptions = new CustomerCreateOptions { Email = email, Name = name };
-            Customer customer = await _customerService.CreateAsync(
-                options: customerOptions,
-                requestOptions: null
-            );
+        var customerOptions = new CustomerCreateOptions { Email = email, Name = name };
+        Customer customer = await _customerService.CreateAsync(
+            options: customerOptions,
+            requestOptions: null
+        );
 
-            return customer.Id; 
+        return customer.Id; 
     }
 }
