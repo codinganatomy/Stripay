@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Stripay.API.Dtos;
 using Stripay.API.ExternalServices.PaymentGateway;
 using Stripay.API.Models;
@@ -6,6 +7,7 @@ using Stripay.API.Persistence;
 
 namespace Stripay.API.Controllers;
 
+[ApiController]
 [Route("api/v1.0/payments")]
 public class PaymentController(IPaymentService paymentService, AppDbContext appDbContext, ILogger<PaymentController> logger) : ControllerBase
 {
@@ -13,9 +15,17 @@ public class PaymentController(IPaymentService paymentService, AppDbContext appD
     private readonly ILogger<PaymentController> _logger = logger;
     private readonly AppDbContext _context = appDbContext;
 
+    [HttpGet]
+    public async Task<IActionResult> GetPayments()
+    {
+        var payments = await _context.Payments.ToListAsync();
+        return Ok(payments);
+    }
+
     [HttpPost]
     public async Task<IActionResult> ProcessPayment(PaymentRequest request)
     {
+        Console.WriteLine(request.CardName);
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
